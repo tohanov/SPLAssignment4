@@ -33,31 +33,33 @@ class _Hats:
         self._conn.execute("DELETE FROM hats WHERE id = ?",[hat_id])
         
     def find_by_id(self, hat_id):
+      
         cursor = self._conn.cursor()
         cursor.execute("SELECT id, topping, supplier, quantity FROM hats WHERE id = ?", [hat_id])
         return Hat(*cursor.fetchone())
     
     def find_by_topping(self, topping):
         cursor = self._conn.cursor()
-        cursor.execute("SELECT * FROM hats WHERE topping = ?", [topping])
+        cursor.execute("SELECT id FROM hats WHERE topping = ?", [topping])
         
         hatsList = cursor.fetchall()
-        
-        chosen_id=0
+                
         if len(hatsList) != 0:
-            chosen_id = hatsList[0].id           
-            for hat in hatsList:
-                if hat.id < chosen_id:
-                    chosen_id = hat.id
+            
+            chosen_id = hatsList[0][0]
+                     
+            for hat_id in hatsList:
+                if hat_id[0] < chosen_id:
+                    chosen_id = hat_id[0]
         
-        
-        return _Hats.find_by_id(chosen_id)                  
+        return chosen_id                 
 
     def decreaseQuantity(self, hat_id):
-        currentQuantity = _Hats.find(self, hat_id).quantity
+        currentQuantity = _Hats.find_by_id(self, hat_id).quantity - 1
+               
         self._conn.execute("UPDATE hats SET quantity = ? WHERE id = ?",[currentQuantity, hat_id])
         
-        if(currentQuantity == 1):
+        if(currentQuantity == 0):
             _Hats.delete(self, hat_id)
     
 class _Suppliers:
@@ -101,13 +103,16 @@ class _Repository(object):
         cursor.execute("CREATE TABLE hats(id INTEGER PRIMARY KEY, topping TEXT NOT NULL, supplier INTEGER NOT NULL, quantity INTEGER NOT NULL, FOREIGN KEY(supplier) REFERENCES suppliers(id))");
         cursor.execute("CREATE TABLE orders(id INTEGER PRIMARY KEY, location TEXT NOT NULL, hat INTEGER NOT NULL, FOREIGN KEY(hat) REFERENCES hats(id))");
 
-    def resolveOrder(self, order, topping):
-        chosen_hat = self.hats.find_by_topping(topping)
-        self.hats.decreaseQuantity(chosen_hat.id)
+    def resolveOrder(self, topping):
+        chosen_hat_id = self.hats.find_by_topping(topping)
         
-        supplier = self.suppliers.find(chosen_hat.supplier)
         
-        return (topping, supplier.name, order.location)
+        chosen_hat = repo.hats.find_by_id(chosen_hat_id)
+        chosen_supplier = repo.suppliers.find(chosen_hat.supplier)
+        
+        self.hats.decreaseQuantity(chosen_hat_id)
+             
+        return (chosen_hat_id, chosen_supplier.name)
         
     
     def getHats(self):
