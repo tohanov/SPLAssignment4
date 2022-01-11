@@ -97,6 +97,7 @@ class _Repository(object):
         self.orders = _Orders(self._conn)
  
     def _close(self):
+        self._conn.commit()
         self._conn.close()
             
     def _create_tables(self):

@@ -30,12 +30,12 @@ for i in range(numOfHats + 1, len(content)):
     
 
         
-hatsList = repo.getHats()
-suppliersList = repo.getSuppliers()
+# hatsList = repo.getHats()
+# suppliersList = repo.getSuppliers()
 
 
-print(hatsList)
-print(suppliersList)
+# print(hatsList)
+# print(suppliersList)
 
 for i in range(numOfOrders):
     info = content2[i].split(",")
@@ -45,9 +45,9 @@ for i in range(numOfOrders):
     repo.orders.insert(new_order)
     
     to_write = info[1] + ","+ resolvedInfo[1] +"," + info[0] + "\n"
-    print(to_write)
+    # print(to_write)
     output.write(to_write)
     
 
-orderList = repo.getOrders()    
-print(orderList)    
+# orderList = repo.getOrders()    
+# print(orderList)    
