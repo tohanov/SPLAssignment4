@@ -40,17 +40,20 @@ class _Hats:
     
     def find_by_topping(self, topping):
         cursor = self._conn.cursor()
-        cursor.execute("SELECT id FROM hats WHERE topping = ?", [topping])
+        cursor.execute("SELECT id, supplier FROM hats WHERE topping = ?", [topping])
         
-        hatsList = cursor.fetchall()
-                
-        if len(hatsList) != 0:
+        infoList = cursor.fetchall()
+        
+        if len(infoList) != 0:
+            chosen_id = infoList[0][0]
+            current_supplier_id = infoList[0][1]         
             
-            chosen_id = hatsList[0][0]
-                     
-            for hat_id in hatsList:
-                if hat_id[0] < chosen_id:
-                    chosen_id = hat_id[0]
+            
+            #for info in infoList:
+            for i in range(len(infoList)):
+                if infoList[i][1] < current_supplier_id:
+                    chosen_id = infoList[i][0]
+                    current_supplier_id = infoList[i][1]
         
         return chosen_id                 
 
