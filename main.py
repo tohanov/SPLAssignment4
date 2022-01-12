@@ -1,10 +1,14 @@
-from persistence import Hat, Order, Supplier, repo
-
+#!/usr/bin/python3
+from persistence import Hat, Order, Supplier, Repository
+import sys
 import os
 
-output = open("output.txt", "w")
-input1 = open("config.txt")
-input2 = open("orders.txt")
+
+input1 = open(sys.argv[1]) # config file path
+input2 = open(sys.argv[2]) # orders file path
+output = open(sys.argv[3], "w") # output file path
+repo = Repository(sys.argv[4]) # database DAO object
+
 
 content = input1.read().split("\n")
 content2 = input2.read().split("\n")
@@ -14,28 +18,17 @@ numOfHats = int(numbers[0])
 numOfSuppliers = int(numbers[1])
 numOfOrders = len(content2)
 
+# parse hats
 for i in range(1,numOfHats + 1):
-    
     info =  content[i].split(",")
     new_hat = Hat(int(info[0]), info[1], int(info[2]), int(info[3]))
     repo.hats.insert(new_hat)
-    
 
-
+# parse suppliers
 for i in range(numOfHats + 1, len(content)):
-    
     info =  content[i].split(",")
     new_supplier= Supplier(int(info[0]), info[1])
     repo.suppliers.insert(new_supplier)
-    
-
-        
-# hatsList = repo.getHats()
-# suppliersList = repo.getSuppliers()
-
-
-# print(hatsList)
-# print(suppliersList)
 
 for i in range(numOfOrders):
     info = content2[i].split(",")
@@ -45,9 +38,4 @@ for i in range(numOfOrders):
     repo.orders.insert(new_order)
     
     to_write = info[1] + ","+ resolvedInfo[1] +"," + info[0] + "\n"
-    # print(to_write)
     output.write(to_write)
-    
-
-# orderList = repo.getOrders()    
-# print(orderList)    

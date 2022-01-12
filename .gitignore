@@ -1,4 +1,13 @@
-
+*
 
 !.gitignore
 !README.md
+
+!zipCommands.sh
+!testCommands.sh
+
+!main.py
+!persistence.py
+!testing
+!testing/**
+*.zip
